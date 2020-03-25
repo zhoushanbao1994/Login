@@ -13,14 +13,16 @@ TEMPLATE = app
 RC_FILE = myapp.rc
 
 
-SOURCES += main.cpp\
-        login.cpp \
+SOURCES += main.cpp \
+    app.cpp \
+    login.cpp \
     exam.cpp \
     passwdedit.cpp \
     register.cpp \
     systemtrayicon.cpp
 
 HEADERS  += login.h \
+    app.h \
     exam.h \
     passwdedit.h \
     register.h \
@@ -33,3 +35,6 @@ FORMS    += login.ui \
 
 RESOURCES += \
     myqrc.qrc
+
+
+include(./sqlite/sqlite.pri)

@@ -14,7 +14,7 @@ class passwdEdit : public QDialog
     Q_OBJECT
     
 public:
-    explicit passwdEdit(QWidget *parent = 0);
+    explicit passwdEdit(QString userName, QString oldPasswd, QWidget *parent = 0);
     ~passwdEdit();
 
     void init();
@@ -30,8 +30,9 @@ private:
     Ui::passwdEdit *ui;
 
     Login *login;
-//    User m_user;
-//    QList<User> m_userList;
+
+    QString m_userName;
+    QString m_oldPasswd;
 };
 
 #endif // PASSWDEDIT_H
