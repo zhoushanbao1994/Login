@@ -7,8 +7,13 @@
 QT       += core gui
 QT       += widgets
 
-TARGET = login
-TEMPLATE = app
+TARGET          = login
+TEMPLATE        = app
+MOC_DIR         = temp/moc
+RCC_DIR         = temp/rcc
+UI_DIR          = temp/ui
+OBJECTS_DIR     = temp/obj
+DESTDIR         = $$PWD/bin
 
 RC_FILE = myapp.rc
 

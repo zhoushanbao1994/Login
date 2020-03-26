@@ -1,9 +1,9 @@
 #include "app.h"
 
 #include <QCoreApplication>
+#include <QtDebug>
 
-
-SQLite *App::sqlite = new SQLite(QCoreApplication::applicationDirPath()+"/sqlite.db");
+SQLite *App::sqlite;
 
 App::App()
 {

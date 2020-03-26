@@ -95,6 +95,7 @@ void Login::configWindow()
 
 void Login::init_sql()
 {
+    App::sqlite = new SQLite(QCoreApplication::applicationDirPath()+"/sqlite.db");
     App::sqlite->tableInit();
     if(!App::sqlite->searchUserByName("admin")) {  // 如果初始管理员不存在
          App::sqlite->addUser("admin", "admin", "admin@qq.com", -1);    // 创建初始管理员用户
