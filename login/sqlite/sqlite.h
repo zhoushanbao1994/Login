@@ -50,6 +50,8 @@ public:
 private:
     QSqlDatabase m_db;      // 数据库
     QSqlQuery *m_check;     // 执行SQL语句
+
+    QString md5(QString s);     // MD5 加密
 };
 
 #endif // SQLITE_H

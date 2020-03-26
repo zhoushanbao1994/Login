@@ -1,4 +1,5 @@
 #include "sqlite.h"
+#include <QCryptographicHash>
 
 SQLite::SQLite(const QString dbname)
 {
@@ -15,6 +16,17 @@ SQLite::SQLite(const QString dbname)
     }
 }
 
+
+QString SQLite::md5(QString s)
+{
+    QString md5;
+    QByteArray bb;
+
+    bb = QCryptographicHash::hash ( s.toLatin1(), QCryptographicHash::Md5 );
+    md5.append(bb.toHex());
+
+    return md5;
+}
 
 void SQLite::tableInit()
 {
@@ -52,7 +64,7 @@ bool SQLite::addUser(QString username, QString passwd, QString email, int rank)
     m_check->prepare("INSERT INTO userInfo(username, passwd, email, rank)"\
                        "VALUES(:un, :pw, :em, :rank)");
     m_check->bindValue(":un", username);
-    m_check->bindValue(":pw", passwd);
+    m_check->bindValue(":pw", md5(passwd));
     m_check->bindValue(":em", email);
     m_check->bindValue(":rank", rank);
 
@@ -71,7 +83,7 @@ bool SQLite::searchUser(QString username, QString passwd, StruUserInfo *userInfo
 {
     m_check->prepare("SELECT * FROM userInfo WHERE username = (:un) AND passwd = (:pw)");
     m_check->bindValue(":un", username);
-    m_check->bindValue(":pw", passwd);
+    m_check->bindValue(":pw", md5(passwd));
 
     if (!m_check->exec()) {  // 执行SQL语句。执行失败
         return false;  // 返回结果
@@ -189,8 +201,8 @@ bool SQLite::updateUserPasswd(QString username, QString oldpasswd, QString newpa
 {
     m_check->prepare("UPDATE userInfo SET passwd=(:npw) WHERE username=(:un) AND passwd=(:opw)");
     m_check->bindValue(":un", username);
-    m_check->bindValue(":opw", oldpasswd);
-    m_check->bindValue(":npw", newpasswd);
+    m_check->bindValue(":opw", md5(oldpasswd));
+    m_check->bindValue(":npw", md5(newpasswd));
 
     if(m_check->exec()) { // 执行成功
         return true;
