@@ -28,8 +28,6 @@ Login::Login(QWidget *parent) :
 
     init();
 
-    connect(this,SIGNAL(close()),this,SLOT(close()));
-
     //隐藏任务栏图标
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowStaysOnTopHint | Qt::Tool;

@@ -18,15 +18,13 @@ SOURCES += main.cpp \
     login.cpp \
     exam.cpp \
     passwdedit.cpp \
-    register.cpp \
-    systemtrayicon.cpp
+    register.cpp
 
 HEADERS  += login.h \
     app.h \
     exam.h \
     passwdedit.h \
-    register.h \
-    systemtrayicon.h
+    register.h
 
 FORMS    += login.ui \
     exam.ui \
@@ -38,3 +36,4 @@ RESOURCES += \
 
 
 include(./sqlite/sqlite.pri)
+include(./systemtrayicon/systemtrayicon.pri)
