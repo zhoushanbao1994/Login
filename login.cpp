@@ -13,8 +13,6 @@
 #include <QDebug>
 #include <QMenu>
 
-float opacity1 = 0.0, opacity2 = 1.0;
-
 Login::Login(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Login)
@@ -53,9 +51,9 @@ void Login::init()
 
     m_Drag = false;
 
-    timer1 = new QTimer;
+    timer1 = new QTimer;        // 用于设置窗口打开时窗口的透明度 0.00~1.00
     timer1->start(5);
-    timer2 = new QTimer;
+    timer2 = new QTimer;        // 用于设置窗口关闭时窗口的透明度 1.00~0.00，关闭窗口
     connect(timer1, SIGNAL(timeout()), this, SLOT(slot_timer1()));
     connect(timer2, SIGNAL(timeout()), this, SLOT(slot_timer2()));
 
@@ -147,6 +145,38 @@ void Login::set_top_img(bool isSandom, int index_img)
              << " " << ui->label_top_img->height();
 }
 
+// 设置用户头像图片
+void Login::set_user_img(bool isSandom, int index_img)
+{
+    //40,182 85 85
+    int set_index_img = 1;
+    if(isSandom == true)//随机显示userimg
+    {
+
+        QTime time_sand;
+        time_sand= QTime::currentTime();//获取当前时间
+        qsrand(time_sand.msec()+time_sand.second()*1000);
+        set_index_img = qrand()%5 + 1 ;//在1-5中选出随机数
+
+    }
+    if(isSandom == false) //不随机显示，按index_img显示图片s
+    {
+        set_index_img = index_img;
+    }
+
+    QString user_img_path=":/images/ico/user1.png";
+    qDebug()<< "             [leo]user" << user_img_path;
+    QImage user_img;
+    user_img_path = ":/images/ico/user" + QString::number(set_index_img, 10)  + ".png";
+    qDebug()<< "             [leo]user" << user_img_path;
+    user_img.load(user_img_path);
+    QPixmap img_pic=QPixmap::fromImage(user_img.scaled(ui->label_user_img->width(),
+                                                       ui->label_user_img->height()));
+                                       ui->label_user_img->setPixmap(img_pic);
+    qDebug() << "             [leo]user_img width heigh:" << ui->label_user_img->width()
+             << " " << ui->label_user_img->height();
+}
+
 // 设置按键样式
 void Login::set_button()
 {
@@ -166,9 +196,9 @@ void Login::set_button()
     //获取界面的宽度
     int width = this->width();
     //设置最小化、关闭按钮在界面的位置
-    minBtn->setGeometry(width-55,5,20,20);
     closeBbtn->setGeometry(width-25,5,20,20);
-    setBtn->setGeometry(width-80,7,15,15);
+    minBtn->setGeometry(width-55,5,20,20);
+    setBtn->setGeometry(width-85,5,20,20);
     //设置键盘ico坐标
     int x = ui->lineEdit_passwd->x();
     int y = ui->lineEdit_passwd->y();
@@ -208,71 +238,42 @@ void Login::set_button()
     int _width = ui->label_user_img->width();
     int _heigh = ui->label_user_img->height();
     status_tBtn->setGeometry(_x+_width-20, _y+_heigh-20, 20, 20);
-    status_tBtn->setIcon(QIcon(":/images/ico/setting.png"));
+    status_tBtn->setIcon(QIcon(":/images/ico/user_online.png"));
+    status_tBtn->setStyleSheet("background-color:transparent;");
     status_tBtn->setToolTip(tr("在线状态"));
     connect(status_tBtn, SIGNAL(clicked()), this, SLOT(slot_setStatus()));
 
     create_menuLanguage();      //创建语言菜单
 }
 
-void Login::set_user_img(bool isSandom, int index_img)
-{
-    //40,182 85 85
-    int set_index_img = 1;
-    if(isSandom == true)//随机显示userimg
-    {
-
-        QTime time_sand;
-        time_sand= QTime::currentTime();//获取当前时间
-        qsrand(time_sand.msec()+time_sand.second()*1000);
-        set_index_img = qrand()%5 + 1 ;//在1-5中选出随机数
-
-    }
-    if(isSandom == false) //不随机显示，按index_img显示图片s
-    {
-        set_index_img = index_img;
-    }
-
-    QString user_img_path=":/images/ico/user1.png";
-    qDebug()<< "             [leo]user" << user_img_path;
-    QImage user_img;
-    user_img_path = ":/images/ico/user" + QString::number(set_index_img, 10)  + ".png";
-    qDebug()<< "             [leo]user" << user_img_path;
-    user_img.load(user_img_path);
-    QPixmap img_pic=QPixmap::fromImage(user_img.scaled(ui->label_user_img->width(),
-                                                       ui->label_user_img->height()));
-                                       ui->label_user_img->setPixmap(img_pic);
-    qDebug() << "             [leo]user_img width heigh:" << ui->label_user_img->width()
-             << " " << ui->label_user_img->height();
-}
-
+// 菜单栏
 void Login::create_menuLanguage()
 {
     //语言
     act_chinese = new QAction(tr("Chinese"), this);
     act_english = new QAction(tr("English"), this);
-    menu1 = new QMenu;
-    menu1->addAction(act_chinese);
-    menu1->addAction(act_english);
+    menu_language = new QMenu;
+    menu_language->addAction(act_chinese);
+    menu_language->addAction(act_english);
 
     //在线状态
-    act0 = new QAction(tr("在线"), this);
-    act1 = new QAction(tr("隐身"), this);
-    act2 = new QAction(tr("离线"), this);
-    act3 = new QAction(tr("忙碌"), this);
+    act_online = new QAction(QIcon(":/images/ico/user_online.png"), tr("在线"), this);
+    act_stealth = new QAction(QIcon(":/images/ico/user_away.png"),tr("隐身"), this);
+    act_offline = new QAction(QIcon(":/images/ico/user_offline.png"), tr("离线"), this);
+    act_busy = new QAction(QIcon(":/images/ico/user_busy.png"), tr("忙碌"), this);
 
     actGrp = new QActionGroup(this);
-    actGrp->addAction(act0);
-    actGrp->addAction(act1);
-    actGrp->addAction(act2);
-    actGrp->addAction(act3);
+    actGrp->addAction(act_online);
+    actGrp->addAction(act_stealth);
+    actGrp->addAction(act_offline);
+    actGrp->addAction(act_busy);
     connect(actGrp, SIGNAL(triggered(QAction*)), this, SLOT(slot_actGrp(QAction*)));
 
-    menu2 = new QMenu;
-    menu2->addAction(act0);
-    menu2->addAction(act1);
-    menu2->addAction(act2);
-    menu2->addAction(act3);
+    menu_onlinestatus = new QMenu;
+    menu_onlinestatus->addAction(act_online);
+    menu_onlinestatus->addAction(act_stealth);
+    menu_onlinestatus->addAction(act_offline);
+    menu_onlinestatus->addAction(act_busy);
 }
 
 
@@ -288,7 +289,7 @@ void Login::mousePressEvent(QMouseEvent *e)
 
 void Login::mouseMoveEvent(QMouseEvent *e)
 {
-    if (m_Drag && (e->buttons() && Qt::LeftButton)) {
+    if (m_Drag && (e->buttons() == Qt::LeftButton)) {
         move(e->globalPos() - m_point);
         e->accept();
         qDebug()<<"leomove";
@@ -297,7 +298,10 @@ void Login::mouseMoveEvent(QMouseEvent *e)
 
 void Login::mouseReleaseEvent(QMouseEvent *e)
 {
-    m_Drag = false;
+    if (e->button() == Qt::LeftButton) {
+        m_Drag = false;
+        qDebug()<<"mouseReleaseEvent";
+    }
 }
 
 // 登录按键
@@ -354,11 +358,13 @@ void Login::on_btn_edit_pwd_clicked()
     }
 }
 
+// 最小化按键
 void Login::slot_minWindow()
 {
     this->showMinimized();
 }
 
+// 关闭按键
 void Login::slot_closeWindow()
 {
     timer2->start(5);
@@ -371,6 +377,7 @@ void Login::slot_trayIcon()
     qDebug() << "trayIcon doubleClicked!";
 }
 
+// 虚拟键盘按键
 void Login::slot_getKeyBoard()
 {
     qDebug() << "key!";
@@ -393,33 +400,41 @@ void Login::slot_getKeyBoard()
     QDesktopServices::openUrl(QUrl(curPath, QUrl::TolerantMode));
 }
 
+// 设置语言按键
 void Login::slot_setLanguage()
 {
-    menu1->exec(QCursor::pos());
+    menu_language->exec(QCursor::pos());    // 显示语言选项框
 }
 
+// 设置在线状态按键
 void Login::slot_setStatus()
 {
-    menu2->exec(QCursor::pos());
+    menu_onlinestatus->exec(QCursor::pos());    // 显示在线状态选项框
 }
 
+// 头像上的在线状态按键（选择了菜单栏中的具体哪个）
 void Login::slot_actGrp(QAction *act)
 {
-    if (act == act0) {
+    if (act == act_online) {
         status_tBtn->setToolTip("在线");
-        qDebug() << "act0";
-    } else if (act == act1) {
+        status_tBtn->setIcon(QIcon(":/images/ico/user_online.png"));
+        qDebug() << "act_online";
+    } else if (act == act_stealth) {
         status_tBtn->setToolTip("隐身");
-        qDebug() << "act1";
-    } else if (act == act2) {
+        status_tBtn->setIcon(QIcon(":/images/ico/user_away.png"));
+        qDebug() << "act_stealth";
+    } else if (act == act_offline) {
         status_tBtn->setToolTip("离线");
-        qDebug() << "act2";
-    } else if (act == act3) {
+        status_tBtn->setIcon(QIcon(":/images/ico/user_offline.png"));
+        qDebug() << "act_offline";
+    } else if (act == act_busy) {
         status_tBtn->setToolTip("忙碌");
-        qDebug() << "act3";
+        status_tBtn->setIcon(QIcon(":/images/ico/user_busy.png"));
+        qDebug() << "act_busy";
     }
 }
 
+// 用于设置窗口打开时窗口的透明度 0.00~1.00
 void Login::slot_timer1()
 {
     if (opacity1 >= 1.0) {
@@ -430,6 +445,7 @@ void Login::slot_timer1()
     setWindowOpacity(opacity1);//设置窗口透明度
 }
 
+// 用于设置窗口关闭时窗口的透明度 1.00~0.00，关闭窗口
 void Login::slot_timer2()
 {
     if (opacity2 <= 0.0) {
@@ -442,6 +458,8 @@ void Login::slot_timer2()
     setWindowOpacity(opacity2);//设置窗口透明度
 }
 
+// 用户名下拉框
+// 信号activated：只要单击下拉框，即使所选内容前后没有变化也会触发此信号
 void Login::on_cBox_account_activated(int index)
 {
     ui->lineEdit_passwd->setText(m_allUserPasswd.at(index));
@@ -450,10 +468,11 @@ void Login::on_cBox_account_activated(int index)
 }
 
 
-//下拉框选里面的项时，会切换top_img的图片和头像图片
+// 用户名下拉框选里面的项时，会切换top_img的图片和头像图片
+// 信号currentIndexChanged 是在单击下拉框且当所选内容发生变化时才会触发此信号
 void Login::on_cBox_account_currentIndexChanged(int index)
 {
-   set_top_img(true,index);
-   set_user_img(true,index);
+   set_top_img(true, index);
+   set_user_img(true, index);
 }
 

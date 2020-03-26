@@ -52,54 +52,56 @@ signals:
 private slots:
     void on_btn_login_clicked();    // 登录按键
     void on_btn_regist_clicked();   // 注册按键
+    void on_btn_edit_pwd_clicked(); // 修改密码按键
 
     void slot_minWindow();          // 最小化
     void slot_closeWindow();        // 关闭
+    void slot_setLanguage();        // 设置语言
+    void slot_getKeyBoard();        // 虚拟键盘按键
+    void slot_setStatus();          // 设置在线状态
+
+    void slot_actGrp(QAction* act); // 头像上的在线状态按键（选择了菜单栏中的具体哪个）
 
     void slot_trayIcon();           // 托盘图标关闭事件的槽函数
 
-    void slot_getKeyBoard();
-
-    void slot_setLanguage();        //设置语言
-
-    void slot_setStatus();          //设置在线状态
-
-    void slot_actGrp(QAction* act);
-
+    // 用户名下来框
     void on_cBox_account_activated(int index);
-
-    void on_btn_edit_pwd_clicked();
-
     void on_cBox_account_currentIndexChanged(int index);
 
-    void slot_timer1();
-    void slot_timer2();
+    void slot_timer1();  // 用于设置窗口打开时窗口的透明度 0.00~1.00
+    void slot_timer2();  // 用于设置窗口关闭时窗口的透明度 1.00~0.00，关闭窗口
 
 private:
     Ui::Login *ui;
 
+    // 与窗口拖动有关
     bool m_Drag;
-    QPoint m_point;
+    QPoint m_point;     // 左键点击窗口空白区域时记录点击坐标
 
-    QTimer *timer1, *timer2;
+    QTimer *timer1; // 用于设置窗口打开时窗口的透明度 0.00~1.00
+    QTimer *timer2; // 用于设置窗口关闭时窗口的透明度 1.00~0.00，关闭窗口
+
+    float opacity1 = 0.0;   // 调解透明的过程中使用的数值
+    float opacity2 = 1.0;
+
 
     QStringList m_allUserPasswd;         //用户密码
 
     QToolButton *minBtn;        // 最小化
     QToolButton *closeBbtn;     // 关闭
-    QToolButton *setBtn;
+    QToolButton *setBtn;        // 设置按键
     QToolButton *keyBtn;        // 键盘按键
-    QToolButton *status_tBtn;       //在线状态
+    QToolButton *status_tBtn;   // 在线状态
 
-    QMenu *menu1;                   //语言菜单
-    QAction *act_chinese;
-    QAction *act_english;
+    QMenu *menu_language;   // 语言菜单
+    QAction *act_chinese;   // 语言菜单-中文
+    QAction *act_english;   // 语言菜单-英文
 
-    QMenu *menu2;                   //在线状态
-    QAction *act0;                  //在线
-    QAction *act1;                  //隐身
-    QAction *act2;                  //离线
-    QAction *act3;                  //忙碌
+    QMenu *menu_onlinestatus;   // 头像上的在线状态按键
+    QAction *act_online;        // 头像上的在线状态按键-在线
+    QAction *act_stealth;       // 头像上的在线状态按键-隐身
+    QAction *act_offline;       // 头像上的在线状态按键-离线
+    QAction *act_busy;          // 头像上的在线状态按键-忙碌
     QActionGroup *actGrp;
 
 
