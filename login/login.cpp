@@ -65,7 +65,9 @@ void Login::init()
 
     //init记住密码
     ui->checkBox_rPasswd->setChecked(true);
-    ui->lineEdit_passwd->setEchoMode(QLineEdit::Password);
+
+    ui->lineEdit_passwd->setEchoMode(QLineEdit::Password);  // 密码模式
+    ui->lineEdit_passwd->setContextMenuPolicy(Qt::NoContextMenu);//设置无右键菜单
 }
 
 void Login::configWindow()
