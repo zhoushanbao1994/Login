@@ -13,6 +13,7 @@
 
 #include "sqlite.h"
 #include "app.h"
+#include "systemtrayicon.h"
 
 struct UserInfoStu{
     QString userName;
@@ -47,7 +48,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e);
 
 signals:
-    void close();
+    void signal_loginSuccessful();  // 登录成功发生信号
     
 private slots:
     void on_btn_login_clicked();    // 登录按键
@@ -73,6 +74,7 @@ private slots:
 
 private:
     Ui::Login *ui;
+    SystemTrayIcon *m_trayIcon;       // 托盘图标
 
     // 与窗口拖动有关
     bool m_Drag;

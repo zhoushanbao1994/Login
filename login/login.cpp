@@ -1,7 +1,6 @@
 #include "login.h"
 #include "ui_login.h"
 
-#include "exam.h"
 #include "passwdedit.h"
 #include "register.h"
 #include "systemtrayicon.h"
@@ -23,20 +22,25 @@ Login::Login(QWidget *parent) :
     QStringList strList;
     strList << "QQ登陆" << "Login v1.0";
     QIcon icon(":/images/QQ.png");
-    SystemTrayIcon *trayIcon = new SystemTrayIcon(strList, icon, this);
-    connect(trayIcon, SIGNAL(signal_showWin()), this, SLOT(slot_trayIcon()));   // 关闭
+    m_trayIcon = new SystemTrayIcon(strList, icon, this);
+    connect(m_trayIcon, SIGNAL(signal_showWin()), this, SLOT(slot_trayIcon()));   // 关闭
 
     init();
 
     //隐藏任务栏图标
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowStaysOnTopHint | Qt::Tool;
-    setWindowFlags(flags);
+    //setWindowFlags(flags);
 }
 
 Login::~Login()
 {
     delete ui;
+
+    if(m_trayIcon) {
+        delete m_trayIcon;
+        m_trayIcon = nullptr;
+    }
 }
 
 void Login::init()
@@ -281,7 +285,7 @@ void Login::mousePressEvent(QMouseEvent *e)
         m_Drag = true;
         m_point = e->globalPos() - this->pos();
         e->accept();
-        qDebug()<<"leo";
+        //qDebug()<<"leo";
     }
 }
 
@@ -290,7 +294,7 @@ void Login::mouseMoveEvent(QMouseEvent *e)
     if (m_Drag && (e->buttons() == Qt::LeftButton)) {
         move(e->globalPos() - m_point);
         e->accept();
-        qDebug()<<"leomove";
+        //qDebug()<<"leomove";
     }
 }
 
@@ -298,7 +302,7 @@ void Login::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
         m_Drag = false;
-        qDebug()<<"mouseReleaseEvent";
+        //qDebug()<<"mouseReleaseEvent";
     }
 }
 
@@ -315,9 +319,7 @@ void Login::on_btn_login_clicked()
     else {
         if(App::sqlite->searchUser(userName, passwd)) {
             //用户名和密码匹配
-            Exam *e = new Exam;
-            e->show();
-            emit close();
+            emit signal_loginSuccessful();  // 登录成功发生信号
         }
         else {
             QMessageBox::information(this,tr("提示"),tr("用户不存在或密码错误！"));
@@ -450,6 +452,7 @@ void Login::slot_timer2()
         timer2->stop();
 
         this->close();
+        m_trayIcon->close();
     }else{
         opacity2 -= 0.01;
     }

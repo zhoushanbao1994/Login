@@ -15,25 +15,15 @@ RC_FILE = myapp.rc
 
 SOURCES += main.cpp \
     app.cpp \
-    login.cpp \
-    exam.cpp \
-    passwdedit.cpp \
-    register.cpp
+    exam.cpp
 
-HEADERS  += login.h \
+HEADERS  += \
     app.h \
-    exam.h \
-    passwdedit.h \
-    register.h
+    exam.h
 
-FORMS    += login.ui \
-    exam.ui \
-    passwdedit.ui \
-    register.ui
-
-RESOURCES += \
-    myqrc.qrc
+FORMS    += \
+    exam.ui
 
 
-include(./sqlite/sqlite.pri)
+include(./login/login.pri)
 include(./systemtrayicon/systemtrayicon.pri)
